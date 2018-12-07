@@ -55,7 +55,7 @@ def signup():
         # response = {"details":use.get_dictionary(), 'message': "you have succesfully signed up" }
         # return make_response(jsonify({'message': "you have succesfully signed up"}), 201)
 
-        return jsonify({'token':access_token, 'message': "you have succesfully signed up", 'user':usee})
+        return jsonify({'token':access_token, 'message': "you have succesfully signed up", 'user':usee}), 201
     except Exception as error:
         raise error
 
