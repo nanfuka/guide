@@ -1,82 +1,42 @@
 import psycopg2
-from pprint import pprint
 import os
+from pprint import pprint
 
 
-class DatabaseConnection:
-
+class DatabaseConnection:  
     def __init__(self):
-        # if os.getenv('APP_SETTINGS') == 'test_db':
-        #     self.db = 'test_db'
-        # else:
-        #     self.db = 'stackoverflow'
-
         try:
-            self.connection = psycopg2.connect(
-                dbname='swett', user='postgres',  password='test', port='5432'
-            )
+            postgresdb = 'swett'
+            Host="localhost"
+            User="postgres"
+            Password="test"
 
+            if os.getenv('env') == "testing":
+                postgresdb = 'fasters'
+                Host="localhost"
+                User="postgres"
+                Password= "test"
+
+            self.connection = psycopg2.connect(
+                    database=postgresdb, host=Host, user=User,
+                    password=Password, port="5432"
+                )
             self.connection.autocommit = True
             self.cursor = self.connection.cursor()
-
-            pprint('Database connected.')
-            create_user_table = "CREATE TABLE IF NOT EXISTS users (userId SERIAL PRIMARY KEY, username TEXT NOT NULL, email TEXT NOT NULL, password TEXT NOT NULL, role TEXT NOT NULL);"
-
-            self.cursor.execute(create_user_table)
-
         except:
-            pprint('Cannot connect to the database.')
+            pprint('cannot connect to database')
 
-    # def insert_users(self, userId, username, email, password):
-    #     insert_user = "INSERT INTO users(userId, username, email, password) VALUES('{}', '{}', '{}', '{}')".format(
-    #         userId, username, email, password)
-    #     pprint(insert_user)
-    #     self.cursor.execute(insert_user)
+    def create_user_table(self):
+        create_table = """CREATE TABLE IF NOT EXISTS users(
+            userId SERIAL PRIMARY KEY,
+            username VARCHAR UNIQUE,
+            email VARCHAR,
+            password VARCHAR,
+            role VARCHAR)"""
+        self.cursor.execute(create_table)
+        self.connection.commit()
 
+    
 
-    # def login(self, username):
-    #     query = "SELECT * FROM users WHERE username='{}'".format(username)
-    #     pprint(query)
-    #     self.cursor.execute(query)
-    #     user = self.cursor.fetchone()
-    #     return user
-
-    # def user(self, username):
-    #     query = "SELECT username FROM users WHERE username='{}'".format(
-    #         username)
-    #     pprint(query)
-    #     self.cursor.execute(query)
-    #     userId = self.cursor.fetchone()
-    #     return userId
-
-    # def check_password(self, password):
-    #     query = "SELECT password FROM users WHERE password='{}'".format(
-    #         password)
-    #     pprint(query)
-    #     self.cursor.execute(query)
-    #     userId = self.cursor.fetchone()
-    #     return userId
-
-    # def check_username(self, username):
-    #     query = "SELECT username FROM users WHERE username='{}'".format(
-    #         username)
-    #     pprint(query)
-    #     self.cursor.execute(query)
-    #     user = self.cursor.fetchone()
-    #     return user
-
-    # def check_email(self, email):
-    #     query = "SELECT email FROM users WHERE email='{}'".format(email)
-    #     pprint(query)
-    #     self.cursor.execute(query)
-    #     email = self.cursor.fetchone()
-    #     return email
-
-    def drop_tables(self):
-        drop = "DROP TABLE users"
-        pprint(drop)
-        self.cursor.execute(drop)
-
-
-if __name__ == '__main__':
-    database_connection = DatabaseConnection()
+database = DatabaseConnection()
+database.create_user_table()

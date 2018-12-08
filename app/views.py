@@ -28,8 +28,8 @@ def signup():
     try:
         parser = request.get_json()
 
-        if validate_not_keys(parser,4):
-            return make_response(jsonify({"message": "Some fields are missing!"}),400)
+        # if validate_not_keys(parser,4):
+        #     return make_response(jsonify({"message": "Some fields are missing!"}),400)
         username = parser.get('username')
         password = parser.get('password')
         email = parser.get('email')
